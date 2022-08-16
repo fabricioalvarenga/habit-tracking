@@ -20,7 +20,6 @@ struct AddActivity: View {
                 TextField("Title", text: $title)
                 
                 TextField("Description", text: $description)
-                
             }
             .navigationTitle("Add new activity")
             .toolbar {
@@ -38,6 +37,8 @@ struct AddActivity: View {
 
 struct AddActivity_Previews: PreviewProvider {
     static var previews: some View {
-        AddActivity(viewModel: ViewModel.shared)
+        let viewModel = ViewModel()
+        
+        AddActivity(viewModel: viewModel)
     }
 }

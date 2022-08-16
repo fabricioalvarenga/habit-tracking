@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ActivityItem: Codable, Identifiable {
+struct ActivityItem: Codable, Identifiable, Equatable {
     var id = UUID()
     var title: String
     var description: String
@@ -15,7 +15,22 @@ struct ActivityItem: Codable, Identifiable {
 }
 
 final class ViewModel: ObservableObject {
-    @Published var activities = [ActivityItem]()
+    @Published var activities = [ActivityItem]() {
+        didSet {
+            if let data = try? JSONEncoder().encode(activities) {
+                UserDefaults.standard.set(data, forKey: "Activities")
+            }
+        }
+    }
     
-    static var shared = ViewModel()
+    init() {
+        if let savedActivities = UserDefaults.standard.data(forKey: "Activities") {
+            if let decodedActivities = try? JSONDecoder().decode([ActivityItem].self, from: savedActivities) {
+                activities = decodedActivities
+                return
+            }
+        }
+        
+        activities = []
+    }
 }

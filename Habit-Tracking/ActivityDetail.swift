@@ -30,48 +30,47 @@ struct ActivityDetail: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var viewModel: ViewModel
     
-    let id: UUID
-    
-    var index: Int {
-        viewModel.activities.firstIndex { $0.id == id } ?? 0
-    }
+    let activity: ActivityItem
     
     var body: some View {
         NavigationView {
-            VStack(alignment: .leading) {
-                Text(viewModel.activities[index].title)
-                    .font(.largeTitle.bold())
-                
-                Text(viewModel.activities[index].description)
-                
-                HStack {
-                    Text("Completion(s): \(viewModel.activities[index].completion)")
+            Form {
+                VStack(alignment: .leading) {
+                    Text(activity.title)
+                        .font(.largeTitle.bold())
+                    
+                    Text(activity.description)
+                    
+                    Text("Completion(s): \(activity.completion)")
                         .font(.headline.bold())
                         .padding(.vertical)
                     
                     Spacer()
-                    
-                    CustomButton(title: "Increment") {
-                        incrementCompletion()
-                        dismiss()
-                    }
                 }
-                
-                Spacer()
             }
-            .padding()
+            .navigationTitle("Activity completion(s)")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                Button("Increment") {
+                    incrementCompletion()
+                    dismiss()
+                }
+            }
         }
-        .navigationTitle("Activity completion(s)")
-        .navigationBarTitleDisplayMode(.inline)
     }
     
     func incrementCompletion() {
-        viewModel.activities[index].completion += 1
+        if let index = viewModel.activities.firstIndex(where: { $0 == activity }) {
+            viewModel.activities[index].completion += 1
+        }
     }
 }
 
 struct ActivityDetail_Previews: PreviewProvider {
     static var previews: some View {
-        ActivityDetail(viewModel: ViewModel.shared, id: UUID())
+        let viewModel = ViewModel()
+        let activity = ActivityItem(title: "Title", description: "Description", completion: 1)
+        
+        ActivityDetail(viewModel: viewModel, activity: activity)
     }
 }

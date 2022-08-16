@@ -17,7 +17,7 @@ struct ContentView: View {
             List {
                 ForEach(viewModel.activities) { activity in
                     NavigationLink {
-                        ActivityDetail(viewModel: viewModel, id: activity.id)
+                        ActivityDetail(viewModel: viewModel, activity: activity)
                     } label: {
                         HStack {
                             VStack(alignment: .leading) {
@@ -33,6 +33,7 @@ struct ContentView: View {
                         }
                     }
                 }
+                .onDelete(perform: removeActivity)
             }
             .navigationTitle("Habit Tracking")
             .toolbar {
@@ -46,6 +47,10 @@ struct ContentView: View {
                 AddActivity(viewModel: viewModel)
             }
         }
+    }
+    
+    func removeActivity(at offsets: IndexSet) {
+        viewModel.activities.remove(atOffsets: offsets)
     }
 }
 
